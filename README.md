@@ -2,6 +2,60 @@
 
 Bu rehber, bir ASP.NET Core API projesine kimlik doğrulama (Authentication) ve yetkilendirme (Authorization) sistemini kurmak için gerekli adımları içerir.
 
+🚪 ASP.NET Core Identity + JWT Authentication/Authorization Nedir?
+
+ASP.NET Core Identity, kullanıcı kimliği yönetimi için kullanılır. Yani kullanıcı kayıt, giriş, parola işlemleri gibi işleri senin yerine kolaylaştırır.
+
+JWT (JSON Web Token) ise kullanıcı giriş yaptıktan sonra ona bir dijital kimlik kartı gibi bir token verir. Bu token, API’ye gelen her istekte gönderilir ve kullanıcının yetkili olup olmadığı bu token üzerinden kontrol edilir.
+
+💡 Kısacası:
+
+Identity: Kullanıcıyı tanı.
+
+JWT: Tanınan kullanıcıya giriş izni ver, ve bu izni koru.
+
+🧠 1. ASP.NET Core Identity Neyi Sağlar?
+
+Kullanıcı kaydı ve oturum açma
+
+Rollerle yetkilendirme (admin, user vs.)
+
+Parola sıfırlama
+
+2 aşamalı doğrulama gibi ekstra güvenlik adımları
+
+Ve bunu hazır tablolar ve servislerle sağlar. Senin baştan kullanıcı yönetim sistemi yazmana gerek kalmaz.
+
+🔑 2. JWT Token Nedir?
+
+JWT (JSON Web Token), giriş yapmış kullanıcıya oluşturulan şifreli bir bilgi paketidir. Örneğin:
+
+```csharp
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+```
+
+Bu token:
+
+Kullanıcının kim olduğunu,
+
+Token’ın ne zaman sona ereceğini,
+
+Hangi rollerle geldiğini (örn: "admin", "user")
+
+gibi bilgileri içerir.
+
+🧩 3. Identity + JWT Birlikte Nasıl Çalışır?
+
+Kullanıcı giriş yapar (/login endpoint'i).
+
+Identity bu kişinin doğru kullanıcı olduğunu onaylar.
+
+Uygulama bu kullanıcı için bir JWT üretir.
+
+Kullanıcı sonraki isteklerinde bu token'ı Authorization başlığında (Bearer şeklinde) gönderir.
+
+Uygulama bu token’ı kontrol eder ve ona göre işlem yapar.
+
 ---
 
 ## 🔧 1. Gerekli NuGet Paketlerini Projeye Ekle
