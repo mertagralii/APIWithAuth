@@ -2,7 +2,7 @@
 
 Bu rehber, bir ASP.NET Core API projesine kimlik doğrulama (Authentication) ve yetkilendirme (Authorization) sistemini kurmak için gerekli adımları içerir.
 
-🚪 ASP.NET Core Identity + JWT Authentication/Authorization Nedir?
+# 🚪 ASP.NET Core Identity + JWT Authentication/Authorization Nedir?
 
 ASP.NET Core Identity, kullanıcı kimliği yönetimi için kullanılır. Yani kullanıcı kayıt, giriş, parola işlemleri gibi işleri senin yerine kolaylaştırır.
 
@@ -10,23 +10,16 @@ JWT (JSON Web Token) ise kullanıcı giriş yaptıktan sonra ona bir dijital kim
 
 💡 Kısacası:
 
-Identity: Kullanıcıyı tanı.
+ Identity: Kullanıcıyı tanı.
 
-JWT: Tanınan kullanıcıya giriş izni ver, ve bu izni koru.
+ JWT: Tanınan kullanıcıya giriş izni ver, ve bu izni koru.
 
-🧠 1. ASP.NET Core Identity Neyi Sağlar?
+# 🧠 1. ASP.NET Core Identity Neyi Sağlar?
 
-Kullanıcı kaydı ve oturum açma
-
-Rollerle yetkilendirme (admin, user vs.)
-
-Parola sıfırlama
-
-2 aşamalı doğrulama gibi ekstra güvenlik adımları
-
+Kullanıcı kaydı ve oturum açma,Rollerle yetkilendirme (admin, user vs.),Parola sıfırlama,2 aşamalı doğrulama gibi ekstra güvenlik adımları
 Ve bunu hazır tablolar ve servislerle sağlar. Senin baştan kullanıcı yönetim sistemi yazmana gerek kalmaz.
 
-🔑 2. JWT Token Nedir?
+# 🔑 2. JWT Token Nedir?
 
 JWT (JSON Web Token), giriş yapmış kullanıcıya oluşturulan şifreli bir bilgi paketidir. Örneğin:
 
@@ -44,7 +37,25 @@ Hangi rollerle geldiğini (örn: "admin", "user")
 
 gibi bilgileri içerir.
 
-🧩 3. Identity + JWT Birlikte Nasıl Çalışır?
+# 🔑 Token Türleri ve Süreleri
+
+## Token Type: "Bearer"
+
+Bearer Token: JWT kullanırken, token'lar genellikle "Bearer" olarak belirtilir. Bu, token'ın sadece sahip olunan bir "yetki" olduğuna işaret eder. Yani, token'ı taşıyan kişi (ya da sistem) o yetkiye sahiptir ve bu yetkiyle API'ye istek gönderilebilir. Authorization başlığında şöyle görünür: Authorization: Bearer <access_token>.
+
+## Access Token
+
+Access Token: Kullanıcının kimliğini doğrulayan, API'ye yapılan her istekte sunucu tarafından kontrol edilen dijital bir anahtardır. Bu token, kullanıcının belirli bir süre boyunca (genellikle kısa süreli) erişim hakkı tanır. API'de belirli bir kaynağa (veritabanı, profil verileri vb.) erişim sağlamak için kullanılır. Genellikle kısa süreli olup, örneğin bir saatlik geçerliliği olabilir.
+
+## Expires In
+
+expiresIn: Bu, access_token'ın ne kadar süreyle geçerli olduğunu belirtir. Yani, token'ın oluşturulduğu andan itibaren kaç saniye boyunca geçerli olacağına dair bir parametredir. Örneğin, 3600 saniye (1 saat) olarak ayarlanabilir. Bu sürenin sonunda, token geçersiz hale gelir ve yeniden bir token almak için "refresh token" kullanılır.
+
+## Refresh Token
+
+Refresh Token: Eğer access_token süresi dolarsa, kullanıcı yeniden giriş yapmak zorunda kalmaz. Bunun yerine, refresh token ile yeni bir access_token alınabilir. Bu token daha uzun süreli olur ve sadece yeni bir access_token almak için kullanılır. Genellikle geçerliliği uzun (örneğin, bir hafta veya bir ay) olabilir. Kullanıcı tekrar oturum açmaya gerek kalmadan, bu token üzerinden yeni bir erişim token'ı talep edebilir.
+
+## 🧩 3. Identity + JWT Birlikte Nasıl Çalışır?
 
 Kullanıcı giriş yapar (/login endpoint'i).
 
