@@ -20,7 +20,7 @@
 
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
 
@@ -39,7 +39,10 @@
                 });
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
+            builder.Services.AddSwaggerGen(c =>
+            {
+                c.EnableAnnotations(); // Swagger Dökümantasyon için 
+            });
             builder.Services.AddAutoMapper(typeof(Program).Assembly); // AutoMapper Kullanacağımız Zaman bunu kullanmamız gerekiyor.
             builder.Services.AddAuthorization();
             
@@ -55,9 +58,17 @@
                 //options.Lockout.MaxFailedAccessAttempts = 5; // 5 defa kullanıcı girişi hatalı olursa patlatıyor.
             });
             // end pointleri oluşturması için çağırdık.
-            builder.Services.AddIdentityApiEndpoints<IdentityUser>().AddEntityFrameworkStores<AppDbContext>();
+            builder.Services.AddIdentityApiEndpoints<IdentityUser>()
+                .AddRoles<IdentityRole>() // IdentityRole
+                .AddEntityFrameworkStores<AppDbContext>();
             
             var app = builder.Build();
+            
+            using (var scope = app.Services.CreateScope()) // İdentityRole
+            {
+                var services = scope.ServiceProvider;
+                await SeedRoles(services);
+            }
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
@@ -75,5 +86,20 @@
             app.MapControllers();
 
             app.Run();
+        }
+        public static async Task SeedRoles(IServiceProvider serviceProvider) // İdentityRole
+        {
+            var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+            var userManager = serviceProvider.GetRequiredService<UserManager<IdentityUser>>();
+    
+            if (await roleManager.RoleExistsAsync("Admin")) { return; }
+    
+            await roleManager.CreateAsync(new IdentityRole("Admin"));
+            //await roleManager.CreateAsync(new IdentityRole("User"));
+    
+            var adminUser = new IdentityUser { UserName = "admin", Email = "orhanekici@gmail.com" };
+            adminUser.EmailConfirmed = true;
+            await userManager.CreateAsync(adminUser, "P99yG-wSd8T$");
+            await userManager.AddToRoleAsync(adminUser, "Admin");
         }
     }

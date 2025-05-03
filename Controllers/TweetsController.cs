@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace APIWithAuth.Controllers
 {
@@ -138,6 +139,13 @@ namespace APIWithAuth.Controllers
             return NoContent();
             
         }
+        // Swagger Dökümantasyonu 
+        // [SwaggerOperation( 
+        //     Summary = "Creates a new product",
+        //     Description = "Requires admin privileges",
+        //     OperationId = "CreateProduct",
+        //     Tags = new[] { "Purchase", "Products" }
+        // )]
         
         [HttpPost("[action]")]
         public async Task<ActionResult> SendEmail() // Mail gönderme kısmı 
@@ -165,6 +173,16 @@ namespace APIWithAuth.Controllers
             message.Dispose();
             client.Dispose();
             return Ok();
+        }
+        
+        // eğer alt alta yazarsak iki rolde de bulunmak zorunda
+        // eğer tek satırda yazıp virgül ile ayırırsak iki rolden birinde olması yeterli demek
+        // [Authorize(Roles = "SuperUser")]
+        [Authorize(Roles = "Admin")]
+        [HttpGet("[action]")]
+        public ActionResult AdminOnly()
+        {
+            return Ok("Admin only");
         }
     }
 }
